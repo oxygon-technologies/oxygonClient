@@ -1,0 +1,37 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 300px;
+}
+
+.profileImg{
+  width:75px;
+  height: 75px;
+  border-radius: 50%;
+
+}
+
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.menu_toolbar{
+
+  height:10em;
+  width:100%;
+  font-size:12px;
+}
+
+.menu_items{
+  font-size:12px;
+}
+
+.active {
+  background-color: #4A84BF;
+	font-weight: bold;
+}
