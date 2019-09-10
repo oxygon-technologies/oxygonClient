@@ -1,0 +1,25 @@
+table {
+    width: 100%;
+  }
+
+span + span {
+    margin-left: 10px;
+}
+.required :focus{
+  background-color: #fff;;
+}
+.required{
+ background-color: red;
+ opacity: 0.1; 
+ color: black;
+}
+
+.button-row button,
+.button-row a {
+  font-size:1em !important;
+  background-color: #DCDCDC;
+}
+
+.blue-snackbar {
+  background: #2196F3;
+}

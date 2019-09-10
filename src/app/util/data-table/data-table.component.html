@@ -1,0 +1,124 @@
+ <br/> <br/>
+  <mat-spinner style="margin:0 auto;"  *ngIf='loading'></mat-spinner>
+  <form *ngIf='!loading'>
+   <mat-card>
+      <div class="button-row">
+        <span ><button  mat-button  value='Add' (click)='addRecord()' >
+                <mat-icon>add</mat-icon>
+              </button>
+        </span>
+        <span *ngIf='selectedCount==1'>
+            <button mat-button    (click)='editSelectedRecord()'>
+                <mat-icon>edit</mat-icon>
+            </button>
+          </span>
+
+        <span *ngIf='!selectedCount==0'>
+          <button mat-button    (click)='deleteRecords()'>
+              <mat-icon>delete</mat-icon>
+          </button>
+        </span>
+        <span *ngIf='newRecordFlag || editRecordFlag' align='right'>
+          <button  mat-button (click)='saveRecords()'>
+              <mat-icon>save</mat-icon>
+          </button>
+        </span>
+        <div style="float: right;">
+        <span>
+            <button   mat-button >
+                <mat-icon>search</mat-icon> 
+            </button>
+          </span>
+        <span>
+            <button  mat-button (click)='refresh()'>
+                <mat-icon>refresh</mat-icon> 
+            </button>
+        </span>
+        </div>
+      </div>
+  </mat-card>
+  
+
+   <br/>
+
+   <mat-card>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th scope="col" >#</th>
+        <th scope="col" *ngFor="let col of logicalUnit" sortable="name" (sort)="onSort($event)" >{{col.columnName | titlecase}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor = 'let newData of newRecords;index as i'>
+            <td>
+           </td>
+          <td *ngFor="let col of logicalUnit" >
+            <input *ngIf='!(col.dataType == "selector")'
+                   type='{{col.dataType}}' 
+                   class="form-control" 
+                   [ngClass]="{'required': col.required==true}" 
+                   name = 'newRecordData_{{i}}{{col.columnName}}' 
+                   id = 'newRecordData_{{i}}{{col.columnName}}' 
+                   [(ngModel)]='newData[col.columnName]'
+                   (keyup)="inputChange(newData[col.columnName],'newRecordData_'+i+col.columnName)"
+                   (change)="inputChange(newData[col.columnName],'newRecordData_'+i+col.columnName)">
+
+            <mat-select *ngIf='(col.dataType == "selector")' 
+                        [(ngModel)]='newData[col.columnName]'
+                        class="form-control" 
+                        name = 'newRecordData_{{i}}{{col.columnName}}'
+                        id = 'newRecordData_{{i}}{{col.columnName}}'
+                         >
+                <mat-option *ngFor="let select of col.selectorValue" [value]="select">
+                   {{select}}
+                </mat-option>
+            </mat-select>      
+          </td>
+      </tr> 
+      
+      <ng-container *ngFor="let data of dataSource; index as i">
+          <tr>
+              <ng-container *ngIf='!data.editingFlag'>
+                <td>
+                  <div class="checkbox">
+                    <input type="checkbox" [ngModel]='data.isChecked' name='check+"i"' (change)="checkValue(data)">
+                  </div>
+                </td>
+                <td  *ngFor="let col of logicalUnit" (dblclick)='editRecord(data)'>{{ data[col.columnName]}}</td>
+              </ng-container>
+
+              <ng-container *ngIf='data.editingFlag'>
+                    <td>
+                    </td>
+                    <td *ngFor="let col of logicalUnit" >
+                      <input type='{{col.dataType}}' 
+                             class="form-control" 
+                             placeholder = '{{col.columnName | titlecase}}' 
+                             name = 'editRecordData_{{i}}{{col.columnName}}' 
+                             id = 'editRecordData_{{i}}{{col.columnName}}'  
+                             [(ngModel)]='data[col.columnName]'
+                             (keyup)="inputChange(data[col.columnName],'editRecordData_'+i+col.columnName)"
+                             disabled = '{{!col.editable}}'>
+                    </td>
+              </ng-container>
+          </tr>
+      </ng-container>    
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between p-2" *ngIf ='totalPages > 1'>
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li  *ngFor = 'let num of createRange(totalPages);'  [ngClass]="{'active' : page == num}"  class="page-item " >
+              <span class="page-link" (click) = 'changePage(num)'>
+                  {{num}}
+              <span class="sr-only">(current)</span>
+              </span>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
+</mat-card>
+</form>

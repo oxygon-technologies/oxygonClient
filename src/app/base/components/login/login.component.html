@@ -1,0 +1,30 @@
+<body>
+<div class="login-wrapper" fxLayout="row" fxLayoutAlign="end">
+
+        <mat-card class="box">
+          <mat-card-header>
+            <mat-card-title>
+              <img src = "assets/logo.jpeg" style='height: 100px;width: 250px'>
+              Oxygon Client
+            </mat-card-title>
+          </mat-card-header>
+      
+          <form class="example-form">
+            <mat-card-content>
+              <mat-form-field class="example-full-width">
+                <input matInput [(ngModel)]= "user.email" name='username' placeholder="Username">
+              </mat-form-field>
+      
+              <mat-form-field class="example-full-width">
+                <input matInput [(ngModel)]= "user.password" name ='password' type='password' placeholder="Password">
+              </mat-form-field>
+
+              <div class='inlineError'>{{this.loginErrorMessage}}</div>
+
+            </mat-card-content>
+            <button mat-flat-button  color="primary" class="btn-block" (click) = 'login()'>Login</button>
+          </form>
+        </mat-card>
+      
+      </div>
+    </body>

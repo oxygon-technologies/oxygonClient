@@ -15,25 +15,25 @@
 
     <mat-nav-list class='menu_items'>
       <h2 matSubheader> {{ 'Event' }} </h2>
-      <a mat-list-item class='menu_items' routerLink='/calculator'  routerLinkActive="active"><span style="padding-right: 10px"><mat-icon>apps</mat-icon></span> Loan Calculator</a>
+      <a mat-list-item class='menu_items' routerLink='/home/userRegister'  routerLinkActive="active"><span style="padding-right: 10px"><mat-icon>apps</mat-icon></span> Users</a>
       <a mat-list-item class='menu_items' routerLink='/appentry'    routerLinkActive="active"><span style="padding-right: 10px"><mat-icon>home</mat-icon></span> Application Entry</a>
       <a mat-list-item class='menu_items' routerLink='/creditScore' routerLinkActive="active"><span style="padding-right: 10px"><mat-icon>score</mat-icon></span> Credit Score</a>
       <a mat-list-item class='menu_items' routerLink='/approval'    routerLinkActive="active"><span style="padding-right: 10px"><mat-icon>check</mat-icon></span> Application Approval</a>
       
       <mat-divider></mat-divider>
     
-      <h2 matSubheader> {{ 'Guests' }} </h2>
+      <h2 matSubheader> Data Setup </h2>
       <mat-expansion-panel class="mat-elevation-z0">
           <mat-expansion-panel-header   [expandedHeight]="'48px'">
             <mat-panel-title class='menu_items'>
-              <span style="padding-right: 10px"><mat-icon>assessment</mat-icon> </span>
-              <span style='padding-top:2px'>Reports</span>
+              <span style="padding-right: 10px;padding-top:3px"><mat-icon>assessment</mat-icon> </span>
+              <span style='padding-top:10px'>Administration</span>
             </mat-panel-title>
           </mat-expansion-panel-header>
 
           <div class="nav-section">
             <div class="nav-item">
-                <a mat-list-item class='menu_items' routerLink='/gradingParameter' routerLinkActive="active"><span style="padding-right: 10px"><mat-icon>equalizer</mat-icon></span> Macroeconomic Forcast</a>
+                <a mat-list-item class='menu_items' routerLink='/home/userRegister'  routerLinkActive="active"><span style="padding-right: 10px"><mat-icon>equalizer</mat-icon></span> Users</a>
                 <a mat-list-item class='menu_items' routerLink='/loanReport' routerLinkActive="active"><span style="padding-right: 10px"><mat-icon>show_chart</mat-icon></span> Loan Report</a>          
             </div>
           </div>
