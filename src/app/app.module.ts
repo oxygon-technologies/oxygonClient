@@ -15,7 +15,9 @@ import { HomeComponent } from './base/components/home/home.component';
 import { UserRegistrationComponent } from './base/components/user-registration/user-registration.component';
 import { DataTableComponent} from './util/data-table/data-table.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import { DecimalPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { LovModalComponent } from './util/lov-modal/lov-modal.component';
+import { AlertModalComponent } from './util/alert-modal/alert-modal.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { DecimalPipe, CommonModule } from '@angular/common';
     LoginComponent,
     HomeComponent,
     UserRegistrationComponent,
-    DataTableComponent
+    DataTableComponent,
+    LovModalComponent,
+    AlertModalComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +43,7 @@ import { DecimalPipe, CommonModule } from '@angular/common';
     CommonModule,
     NgbModule
   ],
+  entryComponents: [LovModalComponent,AlertModalComponent],
   providers: [NgbModule],
   bootstrap: [AppComponent]
 })

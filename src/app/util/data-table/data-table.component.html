@@ -1,5 +1,6 @@
+
  <br/> <br/>
-  <mat-spinner style="margin:0 auto;"  *ngIf='loading'></mat-spinner>
+  <mat-spinner style="margin:0 auto;margin-top: 15%"  *ngIf='loading'></mat-spinner>
   <form *ngIf='!loading'>
    <mat-card>
       <div class="button-row">
@@ -25,7 +26,7 @@
         </span>
         <div style="float: right;">
         <span>
-            <button   mat-button >
+            <button   mat-button (click)="alertError()">
                 <mat-icon>search</mat-icon> 
             </button>
           </span>
@@ -46,14 +47,14 @@
       <thead>
       <tr>
         <th scope="col" >#</th>
-        <th scope="col" *ngFor="let col of logicalUnit" sortable="name" (sort)="onSort($event)" >{{col.columnName | titlecase}}</th>
+        <th scope="col" *ngFor="let col of logicalUnit.columns" sortable="name" (sort)="onSort($event)" >{{col.columnName | titlecase}}</th>
       </tr>
       </thead>
       <tbody>
       <tr *ngFor = 'let newData of newRecords;index as i'>
             <td>
            </td>
-          <td *ngFor="let col of logicalUnit" >
+          <td *ngFor="let col of logicalUnit.columns" >
             <input *ngIf='!(col.dataType == "selector")'
                    type='{{col.dataType}}' 
                    class="form-control" 
@@ -85,13 +86,18 @@
                     <input type="checkbox" [ngModel]='data.isChecked' name='check+"i"' (change)="checkValue(data)">
                   </div>
                 </td>
-                <td  *ngFor="let col of logicalUnit" (dblclick)='editRecord(data)'>{{ data[col.columnName]}}</td>
+                <td  *ngFor="let col of logicalUnit.columns" (dblclick)='editRecord(data)'>
+                    <mat-chip-list *ngIf='col.displayType == "chip"'>
+                     <mat-chip color = '{{col.displayTypeColor}}' selected>{{ data[col.columnName]}}</mat-chip>
+                    </mat-chip-list>
+                    <div *ngIf='col.displayType != "chip"'>{{ data[col.columnName]}}</div>
+                </td>
               </ng-container>
 
               <ng-container *ngIf='data.editingFlag'>
                     <td>
                     </td>
-                    <td *ngFor="let col of logicalUnit" >
+                    <td *ngFor="let col of logicalUnit.columns" >
                       <input type='{{col.dataType}}' 
                              class="form-control" 
                              placeholder = '{{col.columnName | titlecase}}' 
@@ -110,12 +116,22 @@
     <div class="d-flex justify-content-between p-2" *ngIf ='totalPages > 1'>
       <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
+          <li class="page-item " >
+                <span class="page-link" (click) = 'changePage(1)'>
+                    First
+                </span>
+          </li>
           <li  *ngFor = 'let num of createRange(totalPages);'  [ngClass]="{'active' : page == num}"  class="page-item " >
               <span class="page-link" (click) = 'changePage(num)'>
                   {{num}}
               <span class="sr-only">(current)</span>
               </span>
           </li>
+          <li class="page-item " >
+              <span class="page-link" (click) = 'changePage(totalPages)'>
+                  Last
+              </span>
+        </li>
         </ul>
       </nav>
 

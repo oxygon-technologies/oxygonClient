@@ -1,4 +1,5 @@
 import { Component, OnInit,EventEmitter, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav-bar',
@@ -8,9 +9,14 @@ import { Component, OnInit,EventEmitter, Output } from '@angular/core';
 export class NavBarComponent implements OnInit {
   APP_TOOLBAR_TITLE = 'Oxygon Client';
   @Output() toggleSidenav = new EventEmitter<void>();
-  constructor() { }
+  constructor(private router : Router) { }
 
   ngOnInit() {
+  }
+
+  logout(){
+    localStorage.setItem('currentUser', null);
+    this.router.navigateByUrl("");
   }
 
 }

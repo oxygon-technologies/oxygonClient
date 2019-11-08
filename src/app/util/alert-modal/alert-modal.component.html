@@ -1,0 +1,25 @@
+<div class="modal-header {{headerClass}}">
+    <h4 class="modal-title" >{{header}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="this.close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{this.type.alertText}}</p>
+  </div>
+
+  <mat-accordion *ngIf='this.type.code == "error"'>
+    <mat-expansion-panel (opened)="panelOpenState = true"
+                         (closed)="panelOpenState = false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          More Datails
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <p>{{this.type.data}}</p>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="this.close()">Close</button>
+</div>

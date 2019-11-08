@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
       this.loginErrorMessage = '';
       this.webService.servicePost('users/login',this.user).subscribe((response) => {
         console.log("Success")
-        this.user.authdata = window.btoa(this.user.email + ':' + this.user.password);
+        this.user.authdata = window.btoa(this.user.name + ':' + response.responseValue);
         localStorage.setItem('currentUser', JSON.stringify(this.user));
         this.router.navigateByUrl("/home");
       }, (err) => {

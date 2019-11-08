@@ -1,9 +1,12 @@
 import { Component, OnInit, Input, ViewChild, ViewChildren, QueryList, ElementRef} from '@angular/core';
 import { BaseService } from 'src/app/base/base.service';
 import { MatSort, MatSnackBar} from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
 import { DecimalPipe } from '@angular/common';
 import { NgbdSortableHeader} from './sortable.directive';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { LovModalComponent } from '../lov-modal/lov-modal.component';
+import { LovService } from '../services/lov.service';
+import { AlertModalComponent } from '../alert-modal/alert-modal.component';
 
 @Component({
   selector: 'app-data-table',
@@ -12,10 +15,11 @@ import { NgbdSortableHeader} from './sortable.directive';
   providers: [BaseService, DecimalPipe]
 })
 
+
 export class DataTableComponent implements OnInit {
   @Input() path: string="test-local";
   @Input() primaryKey: string = "id";
-  @Input() logicalUnit: any[]=[];
+  @Input() logicalUnit: any;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   displayedDataColoumns: any[]=[];
@@ -35,18 +39,68 @@ export class DataTableComponent implements OnInit {
   newRecordData : any;
   durationInSeconds = 5;
   currentNewRecord : any;
+  modalRef: any;
 
-  private  number$ = new BehaviorSubject<number>(0);
+  
 
-  constructor(private baseService : BaseService, private _elementRef : ElementRef, private _snackBar: MatSnackBar) { }
+  constructor(private baseService : BaseService, private _elementRef : ElementRef, 
+              private _snackBar: MatSnackBar,private modalService: NgbModal,
+              private lovService : LovService
+              ) { }
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
   ngOnInit() {
     //this.displayedDataColoumns = Array.from(this.allDisplayedColumns);
     //this.allDisplayedColumns.unshift('select');'
     this.getData();
+
+    this.lovService.currentMessage.subscribe((message)=>{
+      if(message == 'close' && this.modalRef!= null){
+        this.modalRef.close();
+      }
+
+    } );
    }
 
+   open() {
+    
+    this.modalRef = this.modalService.open(LovModalComponent,{ centered: true });
+    this.modalRef.componentInstance.name = 'World';
+  }
 
+  /************* Alert Methods **************/
+  alertError(error,additonalDetails){
+    this.lovService.alertError(error,additonalDetails);
+    this.modalRef = this.modalService.open(AlertModalComponent,{ centered: true });
+    this.modalRef.componentInstance.name = 'World';
+  }
+
+  
+  alertWarn(message){
+    this.lovService.alertWarn(message);
+    this.modalRef = this.modalService.open(AlertModalComponent,{ centered: true });
+    this.modalRef.componentInstance.name = 'World';
+  }
+
+  showAlert(message, action){
+    this._snackBar.open(message, action, {
+      duration: 2000,
+      panelClass: ['blue-snackbar']
+    });
+  }
+
+
+ 
+/*******Filter Methods**** */
+  isChecked(element, index, array){
+    return element.isChecked;
+  }
+
+  isEdited(element, index, array){
+   return element.editingFlag;
+  }
+
+
+  /******Data Table Manipulation Methods */
   createRange(nNumber){
     var items: number[] = [];
     for(var i = 1; i <= nNumber; i++){
@@ -60,23 +114,21 @@ export class DataTableComponent implements OnInit {
     this.getData();
   }
 
-  isChecked(element, index, array){
-    return element.isChecked;
-  }
-
-  isEdited(element, index, array){
-   return element.editingFlag;
-  }
+  refresh(){
+    this.getData();
+    this.newRecordFlag = false;
+    this.editRecordFlag = false;
+    this.newRecords = [];
+   }
 
   async initRecord(){
     let dataObjString = '{';
-    for (let col of this.logicalUnit){
+    for (let col of this.logicalUnit.columns){
       if(col.dataType != 'selector'){
         dataObjString = dataObjString + '"'+col.columnName+'":"",';
       }else{
         dataObjString = dataObjString + '"'+col.columnName+'":"'+col.selectorValue[0]+'",';
       }
-      
     }
     dataObjString = dataObjString + '}';
     dataObjString = dataObjString.replace(',}','}');
@@ -92,10 +144,7 @@ export class DataTableComponent implements OnInit {
       this.newRecords.push(obj);
       this.currentNewRecord = obj;
     }
-    
-    
   }
-
 
   async editRecord(dataRecord){
     if(this.editRecords.length>0){
@@ -117,6 +166,7 @@ export class DataTableComponent implements OnInit {
     this.editRecordFlag = true;
     this.editRecords.push(dataRecord);
    }
+
   async saveRecords(){
     if(this.newRecords.length>0){
       var isValid = await this.validateInput();
@@ -128,8 +178,6 @@ export class DataTableComponent implements OnInit {
     if(this.editRecords.length>0){
       this.saveData(this.editRecords);
     }
-
-    
   }
 
 
@@ -146,10 +194,31 @@ export class DataTableComponent implements OnInit {
    
    }
 
- 
+   checkValue(event: any){
+    if(event.isChecked){
+      event.isChecked = false;
+      this.selectedCount = this.selectedCount-1;
+    }else{
+      event.isChecked = true;
+      this.selectedCount = this.selectedCount+1;
+    }
+   }
+
+ inputChange(data,name){
+  if(data.length==0){
+    let element = this._elementRef.nativeElement.querySelector('#'+name);
+    element.classList.add("required");   //remove the class
+  }else if (data.length > 0){
+     let element = this._elementRef.nativeElement.querySelector('#'+name);
+     element.classList.remove("required");   //remove the class
+  }
+ }
+
+
+  /********Data Manipulation Methods********/
   getData(){
     this.dataSource = null;
-    this.baseService.serviceGet(this.path+'?page='+this.page+'&pageSize='+this.pageSize).subscribe(result=>{
+    this.baseService.serviceGet(this.path+'?page='+this.page+'&pageSize='+this.pageSize).subscribe((result)=>{
     this.dataSource = result.content;
     this.dataSource.map(v => v.isChecked = false)
     this.dataSource.map(v => v.editFlag = false)
@@ -158,6 +227,13 @@ export class DataTableComponent implements OnInit {
     this.loading = false;
     this.selectedCount = 0;
 
+   }, (err) => {
+     if(err.status == '403'){
+      this.alertError("You Do not have access to this Page",err.message );
+     }else{
+      this.alertError("Server Error",err.message );
+     }
+    
    });
   }
 
@@ -168,7 +244,7 @@ export class DataTableComponent implements OnInit {
       
       this.showAlert("Saved Successfully", 'Ok');
     }, (err) => {
-      this.showAlert("Error Occured", 'Ok');
+      this.alertError("Error Occured when saving",err.message );
     });
   }
 
@@ -181,43 +257,19 @@ export class DataTableComponent implements OnInit {
   }
 
   
-  checkValue(event: any){
-    if(event.isChecked){
-      event.isChecked = false;
-      this.selectedCount = this.selectedCount-1;
-    }else{
-      event.isChecked = true;
-      this.selectedCount = this.selectedCount+1;
-    }
- }
+ 
 
- refresh(){
-  this.getData();
-  this.newRecordFlag = false;
-  this.editRecordFlag = false;
-  this.newRecords = [];
- }
-
- inputChange(data,name){
-  if(data.length==0){
-    let element = this._elementRef.nativeElement.querySelector('#'+name);
-    element.classList.add("required");   //remove the class
-  }else if (data.length > 0){
-     let element = this._elementRef.nativeElement.querySelector('#'+name);
-     element.classList.remove("required");   //remove the class
-  }
- }
-
+ /*****Validation Methods***** */
  async validateInput(){
    if(this.newRecords.length>0){
 
-    let i = this.logicalUnit.length;
-    for (let col of this.logicalUnit){
+    let i = this.logicalUnit.columns.length;
+    for (let col of this.logicalUnit.columns){
      
         i--;
         if(col.required){
           if(this.currentNewRecord[col.columnName] == '' || this.currentNewRecord[col.columnName] == null ){
-            this.showAlert(col.columnName + ' is required','Ok');
+            this.alertWarn(col.columnName + ' is a required field');
             return false;
           }
         }
@@ -231,12 +283,7 @@ export class DataTableComponent implements OnInit {
    
  }
 
-showAlert(message, action){
-  this._snackBar.open(message, action, {
-    duration: 2000,
-    panelClass: ['blue-snackbar']
-  });
-}
+
 
 
 }

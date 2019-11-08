@@ -1,10 +1,10 @@
 export class User {
- username:String = "";
+ name:String = "";
  password:String = "";
  email:string = "";
  authdata:string = "";
 
- logicalUnit = [           {columnName : 'name',
+ logicalUnit = {columns : [{columnName : 'name',
                             required : true,
                             editable : false,
                             dataType : 'text'
@@ -18,8 +18,10 @@ export class User {
                             required : true,
                             editable : false,
                             dataType : 'selector',
-                            selectorValue : ['ACTIVE','DEACTIVE']
-                            }
-                      ];
+                            selectorValue : ['ACTIVE','DEACTIVE'],
+                            displayType : 'chip',
+                            displayTypeColor : 'primary'
+                            }]
+                        };
 
 }
